@@ -32,7 +32,7 @@ namespace blip.webhookreceiver.webapi.Controllers
         /// <response code="200">Response Ingested</response>
         [HttpPost]
         [Consumes("application/json")]
-        public async Task<IActionResult> Post(JObject json)
+        public IActionResult Post(JObject json)
         {
             if (json["from"] != null)
             {
