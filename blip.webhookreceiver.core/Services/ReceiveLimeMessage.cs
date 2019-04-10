@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
-using blip.webhookreceiver.core.Models;
+using blip.webhookreceiver.core.Models.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

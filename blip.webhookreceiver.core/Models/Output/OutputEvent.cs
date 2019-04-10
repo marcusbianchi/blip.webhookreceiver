@@ -1,16 +1,16 @@
 using System;
-using Newtonsoft.Json.Linq;
 
-namespace blip.webhookreceiver.core.Models
+namespace blip.webhookreceiver.core.Models.Output
 {
-    public class Event
+    public class OutputEvent
     {
+        public string botIdentifier { get; set; }
         public string ownerIdentity { get; set; }
-        public Contact contact { get; set; }
+        public string Identity { get; set; }
         public string messageId { get; set; }
         public DateTime storageDate { get; set; }
         public string category { get; set; }
         public string action { get; set; }
-        public JObject extras { get; set; }
+        public string extras { get; set; }
     }
 }

@@ -10,12 +10,12 @@ namespace blip.webhookreceiver.core.Interfaces
     public interface IReceiveLimeMessage
     {
         /// <summary>
-        /// Process Message
+        /// Process Message and send to PubSub
         /// </summary>
         /// <param name="json"> Message JSON received from webhook</param>
         void ProcessMessage(JObject json);
         /// <summary>
-        /// Processs Events
+        /// Processs Events and send to PubSub
         /// </summary>
         /// <param name="json">Event JSON received from blip</param>
         void ProcessEvent(JObject json);

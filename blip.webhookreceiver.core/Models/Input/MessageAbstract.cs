@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace blip.webhookreceiver.core.Models
+namespace blip.webhookreceiver.core.Models.Input
 {
     public abstract class MessageAbstract
     {

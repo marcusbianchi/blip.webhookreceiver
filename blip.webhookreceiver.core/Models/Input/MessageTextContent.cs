@@ -1,4 +1,4 @@
-namespace blip.webhookreceiver.core.Models
+namespace blip.webhookreceiver.core.Models.Input
 {
     public class MessageTextContent : MessageAbstract
     {
