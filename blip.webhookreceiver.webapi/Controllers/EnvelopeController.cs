@@ -32,16 +32,16 @@ namespace blip.webhookreceiver.webapi.Controllers
         /// <response code="200">Response Ingested</response>
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult Post(JObject json)
+        public async Task<IActionResult> Post(JObject json)
         {
             if (json["from"] != null)
             {
-                _receiveLimeMessage.ProcessMessage(json);
+                await _receiveLimeMessage.ProcessMessage(json);
                 return Ok();
             }
             else if (json["ownerIdentity"] != null)
             {
-                _receiveLimeMessage.ProcessEvent(json);
+                await _receiveLimeMessage.ProcessEvent(json);
                 return Ok();
             }
             return BadRequest();

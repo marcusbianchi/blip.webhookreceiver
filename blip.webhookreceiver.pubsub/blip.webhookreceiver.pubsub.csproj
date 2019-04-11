@@ -8,5 +8,9 @@
     <ProjectReference Include="..\blip.webhookreceiver.core\blip.webhookreceiver.core.csproj" />
   </ItemGroup>
 
+   <ItemGroup>
+     <PackageReference Include="Google.Cloud.PubSub.V1" Version="1.0.0" />
+   </ItemGroup>
+
 
 </Project>

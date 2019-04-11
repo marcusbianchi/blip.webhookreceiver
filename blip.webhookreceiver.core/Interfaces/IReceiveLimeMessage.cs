@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace blip.webhookreceiver.core.Interfaces
 {
     /// <summary>
-    /// Receive Lime Messages to process to Pub/Sub endoint
+    /// Receive Lime Messages to process and format to send to pub/sub endpoint
     /// </summary>
     public interface IReceiveLimeMessage
     {
@@ -13,11 +13,11 @@ namespace blip.webhookreceiver.core.Interfaces
         /// Process Message and send to PubSub
         /// </summary>
         /// <param name="json"> Message JSON received from webhook</param>
-        void ProcessMessage(JObject json);
+        Task ProcessMessage(JObject json);
         /// <summary>
         /// Processs Events and send to PubSub
         /// </summary>
         /// <param name="json">Event JSON received from blip</param>
-        void ProcessEvent(JObject json);
+        Task ProcessEvent(JObject json);
     }
 }

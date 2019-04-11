@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using blip.webhookreceiver.core.Interfaces;
 using blip.webhookreceiver.core.Services;
-
+using blip.webhookreceiver.pubsub.Services;
 
 namespace blip.webhookreceiver.webapi
 {
@@ -28,6 +28,7 @@ namespace blip.webhookreceiver.webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ISendToMessageHub, SendToGoogleMessageHub>();
             services.AddTransient<IReceiveLimeMessage, ReceiveLimeMessage>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
