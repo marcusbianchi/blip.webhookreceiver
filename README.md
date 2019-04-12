@@ -17,3 +17,10 @@ Project to receive webhook from BLIP messages
 - DATASET_NAME: DataSet name on GCP BigQuery.
 - EVENT_TABLE_NAME: Event table name on GCP BigQuery.
 - MESSAGE_TABLE_NAME: Message table name on GCP BigQuery.
+
+# Missing Features
+- Logging
+- Unit Testing
+- Docker Containers
+- Kubernetes
+- Deploy Prod
