@@ -23,7 +23,8 @@ namespace blip.webhookreceiver.daemon
                })
                .ConfigureServices((hostContext, services) =>
                {
-                   services.AddOptions();
+                   
+
                })
                .ConfigureLogging((hostingContext, logging) =>
                {

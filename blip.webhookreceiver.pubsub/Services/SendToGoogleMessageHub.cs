@@ -62,9 +62,9 @@ namespace blip.webhookreceiver.pubsub.Services
                 Data = ByteString.CopyFromUtf8(jsonOutputMessage),
                 // The attributes provide metadata in a string-to-string dictionary.
                 Attributes =
-                            {
-                                { "botIdentifier", ouputMessage.botIdentifier }
-                            }
+                    {
+                        { "botIdentifier", ouputMessage.botIdentifier }
+                    }
             };
             await _publisher.PublishAsync(_messageTopicName, new[] { message });
         }
