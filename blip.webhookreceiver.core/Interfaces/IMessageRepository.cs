@@ -5,6 +5,6 @@ namespace blip.webhookreceiver.core.Interfaces
 {
     public interface IMessageRepository
     {
-        Task SaveMessage(OutputMessage ouputMessage);
+        void SaveMessage(OutputMessage ouputMessage);
     }
 }

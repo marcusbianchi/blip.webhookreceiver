@@ -5,7 +5,7 @@ namespace blip.webhookreceiver.core.Interfaces
 {
     public interface IEventRepository
     {
-        Task SaveEvent(OutputEvent outputEvent);
+        void SaveEvent(OutputEvent outputEvent);
 
     }
 }

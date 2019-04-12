@@ -27,27 +27,35 @@ namespace blip.webhookreceiver.bigquery.Services
             // Get Table and Client
             BigQueryClient client = BigQueryClient.Create(projectId);
             BigQueryDataset dataset = client.GetDataset(datasetName);
-            BigQueryTable _table = dataset.GetTable(tableName);
+            _table = dataset.GetTable(tableName);
         }
-        public async Task SaveMessage(OutputMessage ouputMessage)
+        public void SaveMessage(OutputMessage ouputMessage)
         {
-             await _table.InsertRowAsync(new BigQueryInsertRow
-                {
-                    { "botIdentifier", ouputMessage.botIdentifier},
-                    { "type",  ouputMessage.type },
-                    { "id",  ouputMessage.id },
-                    { "from",  ouputMessage.from},
-                    { "to",  ouputMessage.to},
-                    { "metadata",  ouputMessage.metadata},
-                    { "content",  ouputMessage.content},
-                    { "target",  ouputMessage.target},
-                    { "uri",  ouputMessage.uri},
-                    { "previewUri",  ouputMessage.previewUri},
-                    { "previewUri",  ouputMessage.title},
-                    { "text",  ouputMessage.text},
-                    { "storageDate",  ouputMessage.storageDate},
-                }
-            );
+            try
+            {
+                _table.InsertRow(new BigQueryInsertRow
+                    {
+                        { "botIdentifier", ouputMessage.botIdentifier},
+                        { "type",  ouputMessage.type },
+                        { "id",  ouputMessage.id },
+                        { "from",  ouputMessage.from},
+                        { "to",  ouputMessage.to},
+                        { "metadata",  ouputMessage.metadata},
+                        { "content",  ouputMessage.content},
+                        { "target",  ouputMessage.target},
+                        { "uri",  ouputMessage.uri},
+                        { "previewUri",  ouputMessage.previewUri},
+                        { "title",  ouputMessage.title},
+                        { "text",  ouputMessage.text},
+                        { "storageDate",  ouputMessage.storageDate.ToUniversalTime().ToString()},
+                    }
+               );
+               Console.WriteLine("Insert to Messages");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
     }
 }

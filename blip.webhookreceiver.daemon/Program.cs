@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using blip.webhookreceiver.bigquery.Services;
+using blip.webhookreceiver.core.Interfaces;
+using blip.webhookreceiver.daemon.Services;
+using blip.webhookreceiver.pubsub.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +27,11 @@ namespace blip.webhookreceiver.daemon
                })
                .ConfigureServices((hostContext, services) =>
                {
-                   
+
+                   services.AddTransient<IReceiveFromMessageHub, ReceiveFromGoogleMessageHub>();
+                   services.AddTransient<IEventRepository, BigQueryEventRespository>();
+                   services.AddTransient<IMessageRepository, BigQueryMessageRespository>();
+                   services.AddSingleton<IHostedService, DaemonService>();
 
                })
                .ConfigureLogging((hostingContext, logging) =>

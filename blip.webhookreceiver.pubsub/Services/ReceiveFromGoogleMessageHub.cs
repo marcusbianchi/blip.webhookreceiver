@@ -38,28 +38,28 @@ namespace blip.webhookreceiver.pubsub.Services
         public async Task StartSubscribeEventHandler()
         {
             // Pull messages from the subscription using SimpleSubscriber.
-            _messageSubscriber = await SubscriberClient.CreateAsync(_messageSubscriptionName);
-            await _messageSubscriber.StartAsync(async (msg, cancellationToken) =>
+            _eventSubscriber = await SubscriberClient.CreateAsync(_messageSubscriptionName);
+            await _eventSubscriber.StartAsync((msg, cancellationToken) =>
             {
                 string messageString = msg.Data.ToStringUtf8();
-                OutputMessage outmessage = JsonConvert.DeserializeObject<OutputMessage>(messageString);
-                await _messageRepository.SaveMessage(outmessage);
+                OutputEvent outEvent = JsonConvert.DeserializeObject<OutputEvent>(messageString);
+                _eventRepository.SaveEvent(outEvent);
                 // Return Reply.Ack to indicate this message has been handled.
-                return SubscriberClient.Reply.Ack;
+                 return Task.FromResult(SubscriberClient.Reply.Ack);
             });
         }
         public async Task StartSubscribeMessageHandler()
         {
             // Pull messages from the subscription using SimpleSubscriber.
-            _eventSubscriber = await SubscriberClient.CreateAsync(_eventSubscriptionName);
+            _messageSubscriber = await SubscriberClient.CreateAsync(_eventSubscriptionName);
 
-            await _eventSubscriber.StartAsync(async (msg, cancellationToken) =>
+            await _messageSubscriber.StartAsync((msg, cancellationToken) =>
             {
-                string eventString = msg.Data.ToStringUtf8();
-                OutputEvent outEvent = JsonConvert.DeserializeObject<OutputEvent>(eventString);
-                await _eventRepository.SaveEvent(outEvent);
+                string messageString = msg.Data.ToStringUtf8();
+                OutputMessage outputMessage = JsonConvert.DeserializeObject<OutputMessage>(messageString);
+                _messageRepository.SaveMessage(outputMessage);
                 // Return Reply.Ack to indicate this message has been handled.
-                return SubscriberClient.Reply.Ack;
+                return Task.FromResult(SubscriberClient.Reply.Ack);
             });
         }
 

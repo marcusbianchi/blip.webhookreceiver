@@ -26,27 +26,37 @@ namespace blip.webhookreceiver.bigquery.Services
             // Get Table and Client
             BigQueryClient client = BigQueryClient.Create(projectId);
             BigQueryDataset dataset = client.GetDataset(datasetName);
-            BigQueryTable _table = dataset.GetTable(tableName);
+            _table = dataset.GetTable(tableName);
         }
-        public async Task SaveEvent(OutputEvent outputEvent)
+        public void SaveEvent(OutputEvent outputEvent)
         {
-            await _table.InsertRowAsync(new BigQueryInsertRow
-                {
-                    { "botIdentifier", outputEvent.botIdentifier},
-                    { "ownerIdentity",  outputEvent.ownerIdentity },
-                    { "identity",  outputEvent.identity },
-                    { "messageId",  outputEvent.messageId },
-                    { "storageDate",  outputEvent.storageDate },
-                    { "category",  outputEvent.category },
-                    { "action",  outputEvent.action },
-                    { "extras",  outputEvent.extras },
-                    { "externalId",  outputEvent.externalId },
-                    { "group",  outputEvent.group },
-                    { "source",  outputEvent.source },
-                    { "value",  outputEvent.value },
-                    { "label",  outputEvent.label }
-                }
-            );
+            try
+            {
+                _table.InsertRow(new BigQueryInsertRow
+                    {
+                        { "botIdentifier", outputEvent.botIdentifier},
+                        { "ownerIdentity",  outputEvent.ownerIdentity },
+                        { "identity",  outputEvent.identity },
+                        { "messageId",  outputEvent.messageId },
+                        { "storageDate",  outputEvent.storageDate.ToUniversalTime().ToString() },
+                        { "category",  outputEvent.category },
+                        { "action",  outputEvent.action },
+                        { "extras",  outputEvent.extras },
+                        { "externalId",  outputEvent.externalId },
+                        { "group",  outputEvent.group },
+                        { "source",  outputEvent.source },
+                        { "value",  outputEvent.value },
+                        { "label",  outputEvent.label }
+                    }
+               );
+                Console.WriteLine("Insert to Event");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
+
     }
 }
