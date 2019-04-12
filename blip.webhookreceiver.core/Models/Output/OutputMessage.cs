@@ -1,3 +1,4 @@
+using System;
 namespace blip.webhookreceiver.core.Models.Output
 {
     public class OutputMessage
@@ -14,5 +15,6 @@ namespace blip.webhookreceiver.core.Models.Output
         public string previewUri { get; set; }
         public string title { get; set; }
         public string text { get; set; }
+        public DateTime storageDate {get;set;}
     }
 }

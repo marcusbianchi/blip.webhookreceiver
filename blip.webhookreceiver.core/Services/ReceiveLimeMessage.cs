@@ -35,22 +35,33 @@ namespace blip.webhookreceiver.core.Services
 
         public async Task ProcessMessage(JObject json)
         {
+            string botIdentifier = "";
+            if (json["from"] != null && json["from"].ToString().Split('@')[1] == "msging.net")
+            {
+                botIdentifier = json["from"].ToString().Split('@')[1].Split('/')[0];
+            }
+            if (json["to"] != null && json["to"].ToString().Split('@')[1] == "msging.net")
+            {
+                botIdentifier = json["to"].ToString().Split('@')[1].Split('/')[0];
+            }
             OutputMessage outputMessage;
             if (json["type"].ToString() != "text/plain")
             {
                 var blipMmessage = json.ToObject<MessageObjectContent>();
                 outputMessage = new OutputMessage
                 {
-                    botIdentifier = blipMmessage.to.Split('@')[0],
+                    botIdentifier = botIdentifier,
                     type = blipMmessage.type,
                     id = blipMmessage.id,
                     from = blipMmessage.from,
+                    to = blipMmessage.to,
                     metadata = blipMmessage.metadata.ToString(),
                     text = blipMmessage.text,
                     target = blipMmessage.target,
                     previewUri = blipMmessage.previewUri,
                     uri = blipMmessage.uri,
-                    title = blipMmessage.title
+                    title = blipMmessage.title,
+                    storageDate = DateTime.Now
                 };
                 await _sendToMessageHub.PublishMessage(outputMessage);
             }
@@ -59,12 +70,14 @@ namespace blip.webhookreceiver.core.Services
                 var cBlipMmessage = json.ToObject<MessageTextContent>();
                 outputMessage = new OutputMessage
                 {
-                    botIdentifier = cBlipMmessage.to.Split('@')[0],
+                    botIdentifier = botIdentifier,
                     type = cBlipMmessage.type,
                     id = cBlipMmessage.id,
                     from = cBlipMmessage.from,
+                    to = cBlipMmessage.to,
                     metadata = cBlipMmessage.metadata.ToString(),
-                    content = cBlipMmessage.content
+                    content = cBlipMmessage.content,
+                    storageDate = DateTime.Now
                 };
                 await _sendToMessageHub.PublishMessage(outputMessage);
             }
