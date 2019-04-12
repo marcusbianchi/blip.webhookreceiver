@@ -2,6 +2,7 @@
 Project to receive webhook from BLIP messages
 
 ## blip.webhookreceiver.pubsub
+Sub-project to process the messages using GPC PubSub
 
 ### Required Environment Variables:
 - GOOGLE_APPLICATION_CREDENTIALS: Json with google credentials on GCP PubSub.
@@ -11,6 +12,7 @@ Project to receive webhook from BLIP messages
 - MESSAGE_SUBSCRIPTION_NAME: Topc name to the blip messages on GCP PubSub.
 
 ## blip.webhookreceiver.bigquery
+Sub-project to process the messages using GPC BigQuery
 
 ### Required Environment Variables:
 - GOOGLE_APPLICATION_CREDENTIALS: Json with google credentials on GCP PubSub.
