@@ -22,12 +22,17 @@ namespace blip.webhookreceiver.core.Services
             {
                 botIdentifier = cblipEvent.ownerIdentity?.Split('@')[0],
                 ownerIdentity = cblipEvent.ownerIdentity,
-                Identity = cblipEvent.contact?.Identity,
+                identity = cblipEvent.contact?.Identity,
+                externalId = cblipEvent.contact?.ExternalId,
+                group = cblipEvent.contact?.Group,
+                source = cblipEvent.contact?.Source,
                 messageId = cblipEvent.messageId,
                 storageDate = cblipEvent.storageDate,
                 category = cblipEvent.category,
                 action = cblipEvent.action,
-                extras = cblipEvent.extras.ToString()
+                extras = cblipEvent.extras.ToString(),
+                value = cblipEvent.value,
+                label = cblipEvent.label
 
             };
             await _sendToMessageHub.PublishEvent(outputEvent);

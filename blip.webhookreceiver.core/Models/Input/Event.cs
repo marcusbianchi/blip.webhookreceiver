@@ -11,6 +11,9 @@ namespace blip.webhookreceiver.core.Models.Input
         public DateTime storageDate { get; set; }
         public string category { get; set; }
         public string action { get; set; }
+        public string value { get; set; }
+        public string label { get; set; }
+
         public JObject extras { get; set; }
     }
 }

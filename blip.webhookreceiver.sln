@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blip.webhookreceiver.webapi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blip.webhookreceiver.pubsub", "blip.webhookreceiver.pubsub\blip.webhookreceiver.pubsub.csproj", "{925F0918-280F-42E1-B624-3BFDE2C6527F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blip.webhookreceiver.daemon", "blip.webhookreceiver.daemon\blip.webhookreceiver.daemon.csproj", "{A22581E6-0723-43DA-9236-79FAE6E41396}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "blip.webhookreceiver.bigquery", "blip.webhookreceiver.bigquery\blip.webhookreceiver.bigquery.csproj", "{5B11C2EF-78DA-447F-813F-8B679026CECD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +62,29 @@ Global
 		{925F0918-280F-42E1-B624-3BFDE2C6527F}.Release|x64.Build.0 = Release|Any CPU
 		{925F0918-280F-42E1-B624-3BFDE2C6527F}.Release|x86.ActiveCfg = Release|Any CPU
 		{925F0918-280F-42E1-B624-3BFDE2C6527F}.Release|x86.Build.0 = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|x64.Build.0 = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Debug|x86.Build.0 = Debug|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|x64.ActiveCfg = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|x64.Build.0 = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|x86.ActiveCfg = Release|Any CPU
+		{A22581E6-0723-43DA-9236-79FAE6E41396}.Release|x86.Build.0 = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|x64.Build.0 = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Debug|x86.Build.0 = Debug|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|x64.ActiveCfg = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|x64.Build.0 = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|x86.ActiveCfg = Release|Any CPU
+		{5B11C2EF-78DA-447F-813F-8B679026CECD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
