@@ -35,6 +35,9 @@ namespace blip.webhookreceiver.pubsub.Services
             //Create Publisher
             _publisher = PublisherServiceApiClient.Create();
             _logger = logger;
+
+            _logger.LogInformation("GCP Information set. projectId: {projectId} eventTopicName: {eventTopicName},messageTopicName:{messageTopicName}, ", projectId, eventTopicName, messageTopicName);
+
         }
         public async Task PublishEvent(JObject outputEvent)
         {

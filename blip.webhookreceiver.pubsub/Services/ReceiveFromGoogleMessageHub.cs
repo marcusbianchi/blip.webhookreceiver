@@ -6,6 +6,7 @@ using blip.webhookreceiver.core.Models.Input;
 using blip.webhookreceiver.core.Models.Output;
 using Google.Cloud.PubSub.V1;
 using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,7 +20,8 @@ namespace blip.webhookreceiver.pubsub.Services
         private readonly SubscriptionName _messageSubscriptionName;
         private SubscriberClient _eventSubscriber;
         private SubscriberClient _messageSubscriber;
-        public ReceiveFromGoogleMessageHub(IMessageRepository messageRepository, IEventRepository eventRepository)
+        private readonly ILogger _logger;
+        public ReceiveFromGoogleMessageHub(IMessageRepository messageRepository, IEventRepository eventRepository, ILogger<ReceiveFromGoogleMessageHub> logger)
         {
             _eventRepository = eventRepository;
             _messageRepository = messageRepository;
@@ -35,35 +37,43 @@ namespace blip.webhookreceiver.pubsub.Services
 
             _eventSubscriptionName = new SubscriptionName(projectId, eventSubscriptionName);
             _messageSubscriptionName = new SubscriptionName(projectId, messageSubscriptionName);
+            _logger = logger;
+            _logger.LogInformation("GCP Information set. projectId: {projectId} eventSubscriptionName: {eventSubscriptionName},messageSubscriptionName:{messageSubscriptionName}, ", projectId, eventSubscriptionName, messageSubscriptionName);
+
         }
         public async Task StartSubscribeEventHandler()
         {
             // Pull messages from the subscription using SimpleSubscriber.
-            _eventSubscriber = await SubscriberClient.CreateAsync(_messageSubscriptionName);
+            _eventSubscriber = await SubscriberClient.CreateAsync(_eventSubscriptionName);
             await _eventSubscriber.StartAsync((msg, cancellationToken) =>
             {
+                _logger.LogInformation("Event receipt from {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
                 string messageString = msg.Data.ToStringUtf8();
                 JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
-                OutputEvent outEvent  = ConvertToOutputEvent(json); 
+                OutputEvent outEvent = ConvertToOutputEvent(json);
                 _eventRepository.SaveEvent(outEvent);
                 // Return Reply.Ack to indicate this message has been handled.
                 return Task.FromResult(SubscriberClient.Reply.Ack);
             });
+            _logger.LogInformation("Event Listener started for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
+
         }
         public async Task StartSubscribeMessageHandler()
         {
             // Pull messages from the subscription using SimpleSubscriber.
-            _messageSubscriber = await SubscriberClient.CreateAsync(_eventSubscriptionName);
+            _messageSubscriber = await SubscriberClient.CreateAsync(_messageSubscriptionName);
 
             await _messageSubscriber.StartAsync((msg, cancellationToken) =>
             {
+                _logger.LogInformation("Event receipt from {messageSubscriptionName}", _messageSubscriptionName.SubscriptionId);
                 string messageString = msg.Data.ToStringUtf8();
                 JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
-                OutputMessage outputMessage = ConvertToOutputMessage(json); 
+                OutputMessage outputMessage = ConvertToOutputMessage(json);
                 _messageRepository.SaveMessage(outputMessage);
                 // Return Reply.Ack to indicate this message has been handled.
                 return Task.FromResult(SubscriberClient.Reply.Ack);
             });
+            _logger.LogInformation("Message Listener started for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
         }
 
         public async Task StopSubscribeEventHandler()
@@ -71,6 +81,7 @@ namespace blip.webhookreceiver.pubsub.Services
             if (_eventSubscriber != null)
             {
                 await _eventSubscriber.StopAsync(TimeSpan.FromSeconds(15));
+                _logger.LogInformation("Event Listener stoped for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
             }
         }
 
@@ -79,19 +90,23 @@ namespace blip.webhookreceiver.pubsub.Services
             if (_messageSubscriber != null)
             {
                 await _messageSubscriber.StopAsync(TimeSpan.FromSeconds(15));
+                _logger.LogInformation("Event Listener stoped for {messageSubscriptionName}", _messageSubscriptionName.SubscriptionId);
             }
         }
 
         private OutputMessage ConvertToOutputMessage(JObject json)
         {
             string botIdentifier = "";
+            var direction = "";
             if (json["from"] != null && json["from"].ToString().Split('@')[1] == "msging.net")
             {
                 botIdentifier = json["from"].ToString().Split('@')[0];
+                direction = "sent";
             }
             if (json["to"] != null && json["to"].ToString().Split('@')[1] == "msging.net")
             {
                 botIdentifier = json["to"].ToString().Split('@')[0];
+                direction = "receipt";
             }
             OutputMessage outputMessage;
             if (json["type"].ToString() != "text/plain")
@@ -100,6 +115,7 @@ namespace blip.webhookreceiver.pubsub.Services
                 outputMessage = new OutputMessage
                 {
                     botIdentifier = botIdentifier,
+                    direction = direction,
                     type = blipMmessage.type,
                     id = blipMmessage.id,
                     from = blipMmessage.from,
@@ -112,6 +128,7 @@ namespace blip.webhookreceiver.pubsub.Services
                     title = blipMmessage.title,
                     storageDate = DateTime.Now
                 };
+                _logger.LogInformation("Message Identified as NOT plain text for botIdentifier: {botIdentifier}, Direction: {direction}", botIdentifier, direction);
                 return outputMessage;
             }
             else
@@ -128,6 +145,7 @@ namespace blip.webhookreceiver.pubsub.Services
                     content = cBlipMmessage.content,
                     storageDate = DateTime.Now
                 };
+                _logger.LogInformation("Message Identified AS plain text for botIdentifier: {botIdentifier}, Direction: {direction}", botIdentifier, direction);
                 return outputMessage;
             }
         }
@@ -135,6 +153,7 @@ namespace blip.webhookreceiver.pubsub.Services
         private OutputEvent ConvertToOutputEvent(JObject json)
         {
             var cblipEvent = json.ToObject<Event>();
+
             OutputEvent outputEvent = new OutputEvent
             {
                 botIdentifier = cblipEvent.ownerIdentity?.Split('@')[0],
@@ -152,6 +171,7 @@ namespace blip.webhookreceiver.pubsub.Services
                 label = cblipEvent.label
 
             };
+            _logger.LogInformation("Message Identified AS event for botIdentifier: {botIdentifier}", outputEvent.botIdentifier);
             return outputEvent;
         }
     }
