@@ -43,35 +43,55 @@ namespace blip.webhookreceiver.pubsub.Services
         }
         public async Task StartSubscribeEventHandler()
         {
+            _logger.LogInformation("Event Listener starting for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
+
             // Pull messages from the subscription using SimpleSubscriber.
             _eventSubscriber = await SubscriberClient.CreateAsync(_eventSubscriptionName);
             await _eventSubscriber.StartAsync((msg, cancellationToken) =>
             {
-                _logger.LogInformation("Event receipt from {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
-                string messageString = msg.Data.ToStringUtf8();
-                JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
-                OutputEvent outEvent = ConvertToOutputEvent(json);
-                _eventRepository.SaveEvent(outEvent);
-                // Return Reply.Ack to indicate this message has been handled.
-                return Task.FromResult(SubscriberClient.Reply.Ack);
+                try
+                {
+                    _logger.LogInformation("Event receipt from {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
+                    string messageString = msg.Data.ToStringUtf8();
+                    JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
+                    OutputEvent outEvent = ConvertToOutputEvent(json);
+                    _eventRepository.SaveEvent(outEvent);
+                    // Return Reply.Ack to indicate this message has been handled.
+                    return Task.FromResult(SubscriberClient.Reply.Ack);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                    return Task.FromResult(SubscriberClient.Reply.Nack);
+                }
             });
             _logger.LogInformation("Event Listener started for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
 
         }
         public async Task StartSubscribeMessageHandler()
         {
+            _logger.LogInformation("Message Listener starting for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
+
             // Pull messages from the subscription using SimpleSubscriber.
             _messageSubscriber = await SubscriberClient.CreateAsync(_messageSubscriptionName);
 
             await _messageSubscriber.StartAsync((msg, cancellationToken) =>
             {
-                _logger.LogInformation("Event receipt from {messageSubscriptionName}", _messageSubscriptionName.SubscriptionId);
-                string messageString = msg.Data.ToStringUtf8();
-                JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
-                OutputMessage outputMessage = ConvertToOutputMessage(json);
-                _messageRepository.SaveMessage(outputMessage);
-                // Return Reply.Ack to indicate this message has been handled.
-                return Task.FromResult(SubscriberClient.Reply.Ack);
+                try
+                {
+                    _logger.LogInformation("Event receipt from {messageSubscriptionName}", _messageSubscriptionName.SubscriptionId);
+                    string messageString = msg.Data.ToStringUtf8();
+                    JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
+                    OutputMessage outputMessage = ConvertToOutputMessage(json);
+                    _messageRepository.SaveMessage(outputMessage);
+                    // Return Reply.Ack to indicate this message has been handled.
+                    return Task.FromResult(SubscriberClient.Reply.Ack);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                    return Task.FromResult(SubscriberClient.Reply.Nack);
+                }
             });
             _logger.LogInformation("Message Listener started for {eventSubscriptionName}", _eventSubscriptionName.SubscriptionId);
         }

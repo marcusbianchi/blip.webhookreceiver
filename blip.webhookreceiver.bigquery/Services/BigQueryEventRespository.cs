@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
 using blip.webhookreceiver.core.Models.Output;
 using Google.Cloud.BigQuery.V2;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace blip.webhookreceiver.bigquery.Services
@@ -11,8 +13,9 @@ namespace blip.webhookreceiver.bigquery.Services
     public class BigQueryEventRespository : IEventRepository
     {
         private readonly BigQueryTable _table;
+        private readonly ILogger _logger;
 
-        public BigQueryEventRespository()
+        public BigQueryEventRespository(ILogger<BigQueryEventRespository> logger)
         {
             // Get projectId fron config
             string googleCredentialsText = File.ReadAllText(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
@@ -27,6 +30,9 @@ namespace blip.webhookreceiver.bigquery.Services
             BigQueryClient client = BigQueryClient.Create(projectId);
             BigQueryDataset dataset = client.GetDataset(datasetName);
             _table = dataset.GetTable(tableName);
+            _logger = logger;
+            _logger.LogInformation("GCP Information set. projectId: {projectId} datasetName: {datasetName},tableName:{tableName}, ", projectId, datasetName, tableName);
+
         }
         public void SaveEvent(OutputEvent outputEvent)
         {
@@ -49,12 +55,12 @@ namespace blip.webhookreceiver.bigquery.Services
                         { "label",  outputEvent.label }
                     }
                );
-                Console.WriteLine("Insert to Event");
+                _logger.LogInformation("Inserted to Events. outputEvent: {outputEvent}", JsonConvert.SerializeObject(outputEvent));
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
         }
 

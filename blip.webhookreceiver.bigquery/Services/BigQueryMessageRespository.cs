@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
 using blip.webhookreceiver.core.Models.Output;
 using Google.Cloud.BigQuery.V2;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace blip.webhookreceiver.bigquery.Services
@@ -12,8 +14,10 @@ namespace blip.webhookreceiver.bigquery.Services
     {
 
         private readonly BigQueryTable _table;
+        private readonly ILogger _logger;
 
-        public BigQueryMessageRespository()
+
+        public BigQueryMessageRespository(ILogger<BigQueryMessageRespository> logger)
         {
             // Get projectId fron config
             string googleCredentialsText = File.ReadAllText(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
@@ -27,7 +31,11 @@ namespace blip.webhookreceiver.bigquery.Services
             // Get Table and Client
             BigQueryClient client = BigQueryClient.Create(projectId);
             BigQueryDataset dataset = client.GetDataset(datasetName);
+
+            _logger = logger;
             _table = dataset.GetTable(tableName);
+            _logger.LogInformation("GCP Information set. projectId: {projectId} datasetName: {datasetName},tableName:{tableName}, ", projectId, datasetName, tableName);
+
         }
         public void SaveMessage(OutputMessage ouputMessage)
         {
@@ -50,11 +58,11 @@ namespace blip.webhookreceiver.bigquery.Services
                         { "storageDate",  ouputMessage.storageDate.ToUniversalTime().ToString()},
                     }
                );
-               Console.WriteLine("Insert to Messages");
+                _logger.LogInformation("Inserted to Messages. ouputMessage: {ouputMessage}", JsonConvert.SerializeObject(ouputMessage));
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError(ex.ToString());
             }
         }
     }

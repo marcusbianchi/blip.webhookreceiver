@@ -21,8 +21,8 @@ Sub-project to process the messages using GPC BigQuery
 - MESSAGE_TABLE_NAME: Message table name on GCP BigQuery.
 
 # Missing Features
-- Logging
-- Unit Testing
+- Logging (DONE!)
 - Docker Containers
 - Kubernetes
 - Deploy Prod
+- Unit Testing

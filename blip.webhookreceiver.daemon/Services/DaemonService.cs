@@ -10,19 +10,27 @@ namespace blip.webhookreceiver.daemon.Services
     public class DaemonService : IHostedService, IDisposable
     {
         private readonly IReceiveFromMessageHub _receiveFromMessageHub;
-        public DaemonService(IReceiveFromMessageHub receiveFromMessageHub)
+        private readonly ILogger _logger;
+
+        public DaemonService(IReceiveFromMessageHub receiveFromMessageHub, ILogger<DaemonService> logger)
         {
             _receiveFromMessageHub = receiveFromMessageHub;
+            _logger = logger;
         }
         public void Dispose()
         {
-
+            _logger.LogInformation("Service Disposed");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _receiveFromMessageHub.StartSubscribeMessageHandler();
-            _receiveFromMessageHub.StartSubscribeEventHandler();
+            Task.Run(async () =>
+                await _receiveFromMessageHub.StartSubscribeMessageHandler()
+            );
+            Task.Run(async () =>
+                await _receiveFromMessageHub.StartSubscribeEventHandler()
+            );
+            _logger.LogInformation("Service Started");
             return Task.CompletedTask;
 
         }
@@ -31,6 +39,7 @@ namespace blip.webhookreceiver.daemon.Services
         {
             _receiveFromMessageHub.StopSubscribeEventHandler();
             _receiveFromMessageHub.StopSubscribeMessageHandler();
+            _logger.LogInformation("Service Stopped");
             return Task.CompletedTask;
 
         }
