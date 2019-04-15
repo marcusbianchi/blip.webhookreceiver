@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using blip.webhookreceiver.core.Models;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace blip.webhookreceiver.webapi.Controllers
 {
@@ -18,11 +19,14 @@ namespace blip.webhookreceiver.webapi.Controllers
     public class EnvelopeController : ControllerBase
     {
         private readonly IReceiveLimeMessage _receiveLimeMessage;
-        public EnvelopeController(IReceiveLimeMessage receiveLimeMessage)
+        private readonly ILogger _logger;
+
+        public EnvelopeController(IReceiveLimeMessage receiveLimeMessage, ILogger<EnvelopeController> logger)
         {
             _receiveLimeMessage = receiveLimeMessage;
+            _logger = logger;
         }
-        
+
         /// <summary>
         /// Receives Webhook posts
         /// </summary>
@@ -37,13 +41,16 @@ namespace blip.webhookreceiver.webapi.Controllers
             if (json["from"] != null)
             {
                 await _receiveLimeMessage.ProcessMessage(json);
+                _logger.LogInformation("HTTP Message Processed");
                 return Ok();
             }
             else if (json["ownerIdentity"] != null)
             {
                 await _receiveLimeMessage.ProcessEvent(json);
+                _logger.LogInformation("HTTP Event Processed");
                 return Ok();
             }
+            _logger.LogWarning("HTTP JSON not Recognized. JSON: {json}",JsonConvert.SerializeObject(json));
             return BadRequest();
         }
     }

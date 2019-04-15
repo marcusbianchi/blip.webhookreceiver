@@ -7,15 +7,17 @@ using Google.Cloud.PubSub.V1;
 using Google.Protobuf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace blip.webhookreceiver.pubsub.Services
 {
     public class SendToGoogleMessageHub : ISendToMessageHub
     {
         private readonly PublisherServiceApiClient _publisher;
+        private readonly ILogger _logger;
         private readonly TopicName _eventTopicName;
         private readonly TopicName _messageTopicName;
-        public SendToGoogleMessageHub()
+        public SendToGoogleMessageHub(ILogger<SendToGoogleMessageHub> logger)
         {
             // Get projectId fron config
             string googleCredentialsText = File.ReadAllText(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
@@ -32,8 +34,9 @@ namespace blip.webhookreceiver.pubsub.Services
 
             //Create Publisher
             _publisher = PublisherServiceApiClient.Create();
+            _logger = logger;
         }
-        public async Task PublishEvent(OutputEvent outputEvent)
+        public async Task PublishEvent(JObject outputEvent)
         {
             // Convert object to string
             string jsonOutputEvent = JsonConvert.SerializeObject(outputEvent);
@@ -41,17 +44,13 @@ namespace blip.webhookreceiver.pubsub.Services
             PubsubMessage message = new PubsubMessage
             {
                 // The data is any arbitrary ByteString. Here, we're using text.
-                Data = ByteString.CopyFromUtf8(jsonOutputEvent),
-                // The attributes provide metadata in a string-to-string dictionary.
-                Attributes =
-                            {
-                                { "botIdentifier", outputEvent.botIdentifier }
-                            }
+                Data = ByteString.CopyFromUtf8(jsonOutputEvent)
             };
             await _publisher.PublishAsync(_eventTopicName, new[] { message });
+            _logger.LogInformation("Event sent to GCP PubSub. Topic: {topic}", _eventTopicName.TopicId);
         }
 
-        public async Task PublishMessage(OutputMessage ouputMessage)
+        public async Task PublishMessage(JObject ouputMessage)
         {
             // Convert object to string
             string jsonOutputMessage = JsonConvert.SerializeObject(ouputMessage);
@@ -59,14 +58,10 @@ namespace blip.webhookreceiver.pubsub.Services
             PubsubMessage message = new PubsubMessage
             {
                 // The data is any arbitrary ByteString. Here, we're using text.
-                Data = ByteString.CopyFromUtf8(jsonOutputMessage),
-                // The attributes provide metadata in a string-to-string dictionary.
-                Attributes =
-                    {
-                        { "botIdentifier", ouputMessage.botIdentifier }
-                    }
+                Data = ByteString.CopyFromUtf8(jsonOutputMessage)
             };
             await _publisher.PublishAsync(_messageTopicName, new[] { message });
+            _logger.LogInformation("Message sent to GCP PubSub. Topic: {topic}", _messageTopicName.TopicId);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
+using blip.webhookreceiver.core.Models.Input;
 using blip.webhookreceiver.core.Models.Output;
 using Google.Cloud.PubSub.V1;
 using Google.Protobuf;
@@ -42,10 +43,11 @@ namespace blip.webhookreceiver.pubsub.Services
             await _eventSubscriber.StartAsync((msg, cancellationToken) =>
             {
                 string messageString = msg.Data.ToStringUtf8();
-                OutputEvent outEvent = JsonConvert.DeserializeObject<OutputEvent>(messageString);
+                JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
+                OutputEvent outEvent  = ConvertToOutputEvent(json); 
                 _eventRepository.SaveEvent(outEvent);
                 // Return Reply.Ack to indicate this message has been handled.
-                 return Task.FromResult(SubscriberClient.Reply.Ack);
+                return Task.FromResult(SubscriberClient.Reply.Ack);
             });
         }
         public async Task StartSubscribeMessageHandler()
@@ -56,7 +58,8 @@ namespace blip.webhookreceiver.pubsub.Services
             await _messageSubscriber.StartAsync((msg, cancellationToken) =>
             {
                 string messageString = msg.Data.ToStringUtf8();
-                OutputMessage outputMessage = JsonConvert.DeserializeObject<OutputMessage>(messageString);
+                JObject json = JsonConvert.DeserializeObject<JObject>(messageString);
+                OutputMessage outputMessage = ConvertToOutputMessage(json); 
                 _messageRepository.SaveMessage(outputMessage);
                 // Return Reply.Ack to indicate this message has been handled.
                 return Task.FromResult(SubscriberClient.Reply.Ack);
@@ -77,6 +80,79 @@ namespace blip.webhookreceiver.pubsub.Services
             {
                 await _messageSubscriber.StopAsync(TimeSpan.FromSeconds(15));
             }
+        }
+
+        private OutputMessage ConvertToOutputMessage(JObject json)
+        {
+            string botIdentifier = "";
+            if (json["from"] != null && json["from"].ToString().Split('@')[1] == "msging.net")
+            {
+                botIdentifier = json["from"].ToString().Split('@')[0];
+            }
+            if (json["to"] != null && json["to"].ToString().Split('@')[1] == "msging.net")
+            {
+                botIdentifier = json["to"].ToString().Split('@')[0];
+            }
+            OutputMessage outputMessage;
+            if (json["type"].ToString() != "text/plain")
+            {
+                var blipMmessage = json.ToObject<MessageObjectContent>();
+                outputMessage = new OutputMessage
+                {
+                    botIdentifier = botIdentifier,
+                    type = blipMmessage.type,
+                    id = blipMmessage.id,
+                    from = blipMmessage.from,
+                    to = blipMmessage.to,
+                    metadata = blipMmessage.metadata.ToString(),
+                    text = blipMmessage.text,
+                    target = blipMmessage.target,
+                    previewUri = blipMmessage.previewUri,
+                    uri = blipMmessage.uri,
+                    title = blipMmessage.title,
+                    storageDate = DateTime.Now
+                };
+                return outputMessage;
+            }
+            else
+            {
+                var cBlipMmessage = json.ToObject<MessageTextContent>();
+                outputMessage = new OutputMessage
+                {
+                    botIdentifier = botIdentifier,
+                    type = cBlipMmessage.type,
+                    id = cBlipMmessage.id,
+                    from = cBlipMmessage.from,
+                    to = cBlipMmessage.to,
+                    metadata = cBlipMmessage.metadata.ToString(),
+                    content = cBlipMmessage.content,
+                    storageDate = DateTime.Now
+                };
+                return outputMessage;
+            }
+        }
+
+        private OutputEvent ConvertToOutputEvent(JObject json)
+        {
+            var cblipEvent = json.ToObject<Event>();
+            OutputEvent outputEvent = new OutputEvent
+            {
+                botIdentifier = cblipEvent.ownerIdentity?.Split('@')[0],
+                ownerIdentity = cblipEvent.ownerIdentity,
+                identity = cblipEvent.contact?.Identity,
+                externalId = cblipEvent.contact?.ExternalId,
+                group = cblipEvent.contact?.Group,
+                source = cblipEvent.contact?.Source,
+                messageId = cblipEvent.messageId,
+                storageDate = cblipEvent.storageDate,
+                category = cblipEvent.category,
+                action = cblipEvent.action,
+                extras = cblipEvent.extras.ToString(),
+                value = cblipEvent.value,
+                label = cblipEvent.label
+
+            };
+            return outputEvent;
         }
     }
 }
