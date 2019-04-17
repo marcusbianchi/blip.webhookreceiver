@@ -13,6 +13,7 @@ namespace blip.webhookreceiver.core.Models.Input
         public string action { get; set; }
         public string value { get; set; }
         public string label { get; set; }
+        public string id { get; set; }
 
         public JObject extras { get; set; }
     }

@@ -42,6 +42,7 @@ namespace blip.webhookreceiver.pubsub.Services
         public async Task PublishEvent(JObject outputEvent)
         {
             // Convert object to string
+            outputEvent["id"] = Guid.NewGuid().ToString();
             string jsonOutputEvent = JsonConvert.SerializeObject(outputEvent);
             // Publish a message to the topic.
             PubsubMessage message = new PubsubMessage
@@ -57,6 +58,7 @@ namespace blip.webhookreceiver.pubsub.Services
         {
             // Convert object to string
             string jsonOutputMessage = JsonConvert.SerializeObject(ouputMessage);
+
             // Publish a message to the topic.
             PubsubMessage message = new PubsubMessage
             {

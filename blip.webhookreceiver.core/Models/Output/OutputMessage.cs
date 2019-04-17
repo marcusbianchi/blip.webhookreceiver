@@ -16,6 +16,6 @@ namespace blip.webhookreceiver.core.Models.Output
         public string title { get; set; }
         public string text { get; set; }
         public string direction { get; set; }
-        public DateTime storageDate {get;set;}
+        public string storageDate {get;set;}
     }
 }

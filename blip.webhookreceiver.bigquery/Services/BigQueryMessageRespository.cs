@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
 using blip.webhookreceiver.core.Models.Output;
@@ -37,15 +39,12 @@ namespace blip.webhookreceiver.bigquery.Services
             _logger.LogInformation("GCP Information set. projectId: {projectId} datasetName: {datasetName},tableName:{tableName}, ", projectId, datasetName, tableName);
 
         }
-        public void SaveMessage(OutputMessage ouputMessage)
+        public async Task SaveMessage(OutputMessage ouputMessage)
         {
-            try
-            {
-                _table.InsertRow(new BigQueryInsertRow
+            await _table.InsertRowAsync(new BigQueryInsertRow(insertId: ouputMessage.id)
                     {
                         { "botIdentifier", ouputMessage.botIdentifier},
                         { "type",  ouputMessage.type },
-                        { "id",  ouputMessage.id },
                         { "from",  ouputMessage.from},
                         { "to",  ouputMessage.to},
                         { "metadata",  ouputMessage.metadata},
@@ -55,15 +54,34 @@ namespace blip.webhookreceiver.bigquery.Services
                         { "previewUri",  ouputMessage.previewUri},
                         { "title",  ouputMessage.title},
                         { "text",  ouputMessage.text},
-                        { "storageDate",  ouputMessage.storageDate.ToUniversalTime().ToString()},
+                        { "storageDate",  ouputMessage.storageDate},
+                        { "direction",  ouputMessage.direction}
                     }
                );
-                _logger.LogInformation("Inserted to Messages. ouputMessage: {ouputMessage}", JsonConvert.SerializeObject(ouputMessage));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-            }
+            _logger.LogInformation("Inserted to Message. id: {id}",ouputMessage.id);
+
+        }
+
+        public async Task SaveMessageBatch(IList<OutputMessage> ouputMessage)
+        {
+            var insertList = ouputMessage.Select(x => new BigQueryInsertRow() {
+                        { "botIdentifier", x.botIdentifier},
+                        { "type",  x.type },
+                        { "id",  x.id },
+                        { "from",  x.from},
+                        { "to",  x.to},
+                        { "metadata",  x.metadata},
+                        { "content",  x.content},
+                        { "target",  x.target},
+                        { "uri",  x.uri},
+                        { "previewUri",  x.previewUri},
+                        { "title",  x.title},
+                        { "text",  x.text},
+                        { "storageDate",  x.storageDate},
+                        { "direction",  x.direction} }).ToList();
+            await _table.InsertRowsAsync(insertList);
+            _logger.LogInformation("Inserted to Messages. Qt: {Qt}", insertList.Count);
+
         }
     }
 }

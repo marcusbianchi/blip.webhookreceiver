@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using blip.webhookreceiver.bigquery.Services;
 using blip.webhookreceiver.core.Interfaces;
+using blip.webhookreceiver.core.Services;
 using blip.webhookreceiver.daemon.Services;
 using blip.webhookreceiver.pubsub.Services;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +28,7 @@ namespace blip.webhookreceiver.daemon
                })
                .ConfigureServices((hostContext, services) =>
                {
-
+                   services.AddTransient<ILimeConverter, LimeConverter>();
                    services.AddTransient<IReceiveFromMessageHub, ReceiveFromGoogleMessageHub>();
                    services.AddTransient<IEventRepository, BigQueryEventRespository>();
                    services.AddTransient<IMessageRepository, BigQueryMessageRespository>();

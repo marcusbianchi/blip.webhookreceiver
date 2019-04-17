@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using blip.webhookreceiver.core.Models.Output;
 
@@ -12,6 +13,13 @@ namespace blip.webhookreceiver.core.Interfaces
         /// Save the message on the permanent Data.
         /// </summary>
         /// <param name="OutputMessage">Flattened Message</param>
-        void SaveMessage(OutputMessage ouputMessage);
+        Task SaveMessage(OutputMessage ouputMessage);
+
+        /// <summary>
+        /// Process Batch Messages
+        /// </summary>
+        /// <param name="ouputMessage">List Flattened Message</param>
+        Task SaveMessageBatch(IList<OutputMessage> ouputMessage);
+
     }
 }

@@ -11,11 +11,13 @@ namespace blip.webhookreceiver.core.Models.Output
         public string group { get; set; }
         public string source { get; set; }
         public string messageId { get; set; }
-        public DateTime storageDate { get; set; }
+        public string storageDate { get; set; }
         public string category { get; set; }
         public string action { get; set; }
         public string extras { get; set; }
         public string value { get; set; }
         public string label { get; set; }
+        public string id { get; set; }
+
     }
 }

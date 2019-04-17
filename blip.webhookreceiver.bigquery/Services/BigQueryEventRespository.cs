@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using blip.webhookreceiver.core.Interfaces;
 using blip.webhookreceiver.core.Models.Output;
@@ -34,17 +36,15 @@ namespace blip.webhookreceiver.bigquery.Services
             _logger.LogInformation("GCP Information set. projectId: {projectId} datasetName: {datasetName},tableName:{tableName}, ", projectId, datasetName, tableName);
 
         }
-        public void SaveEvent(OutputEvent outputEvent)
+        public async Task SaveEvent(OutputEvent outputEvent)
         {
-            try
-            {
-                _table.InsertRow(new BigQueryInsertRow
+            await _table.InsertRowAsync(new BigQueryInsertRow(insertId: outputEvent.id)
                     {
                         { "botIdentifier", outputEvent.botIdentifier},
                         { "ownerIdentity",  outputEvent.ownerIdentity },
                         { "identity",  outputEvent.identity },
                         { "messageId",  outputEvent.messageId },
-                        { "storageDate",  outputEvent.storageDate.ToUniversalTime().ToString() },
+                        { "storageDate",  outputEvent.storageDate},
                         { "category",  outputEvent.category },
                         { "action",  outputEvent.action },
                         { "extras",  outputEvent.extras },
@@ -54,15 +54,32 @@ namespace blip.webhookreceiver.bigquery.Services
                         { "value",  outputEvent.value },
                         { "label",  outputEvent.label }
                     }
-               );
-                _logger.LogInformation("Inserted to Events. outputEvent: {outputEvent}", JsonConvert.SerializeObject(outputEvent));
+           );
+            _logger.LogInformation("Inserted to Events. id: {id}",outputEvent.id);
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-            }
         }
 
+        public async Task SaveEventBatch(IList<OutputEvent> outputEvent)
+        {
+
+            var insertList = outputEvent.Select(x => new BigQueryInsertRow() {
+                       { "botIdentifier", x.botIdentifier},
+                        { "ownerIdentity",  x.ownerIdentity },
+                        { "identity",  x.identity },
+                        { "messageId",  x.messageId },
+                        { "storageDate",  x.storageDate},
+                        { "category",  x.category },
+                        { "action",  x.action },
+                        { "extras",  x.extras },
+                        { "externalId",  x.externalId },
+                        { "group",  x.group },
+                        { "source",  x.source },
+                        { "value",  x.value },
+                        { "label",  x.label }
+                    }).ToList();
+            await _table.InsertRowsAsync(insertList);
+            _logger.LogInformation("Inserted to Messages. Qt: {Qt}", insertList.Count);
+
+        }
     }
 }
