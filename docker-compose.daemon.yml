@@ -2,7 +2,7 @@ version: '3'
 
 services:
   daemon:
-    image: marcusbianchi / blip.webhookreceiver.daemon.gcp.pubsub:1.0
+    image: marcusbianchi/blip.webhookreceiver.daemon.gcp.pubsub:1.0
     environment:
     - MESSAGE_SUBSCRIPTION_NAME=sub-webhook-message-hmg
     - EVENT_SUBSCRIPTION_NAME=sub-webhook-event-hmg
