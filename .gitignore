@@ -55,8 +55,10 @@ dlldata.c
 BenchmarkDotNet.Artifacts/
 
 # .NET Core
-project.lock.json
-project.fragment.lock.json
+project.lock.jsonlocal_deploy
+
+project.fragment.local_deploy
+ock.json
 artifacts/
 
 # StyleCop
@@ -112,7 +114,8 @@ ipch/
 *.sap
 
 # Visual Studio Trace Files
-*.e2e
+*.e2elocal_deploy
+
 
 # TFS 2012 Local Workspace
 $tf/
@@ -219,7 +222,8 @@ _pkginfo.txt
 !?*.[Cc]ache/
 
 # Others
-ClientBin/
+ClientBin/local_deploy
+
 ~$*
 *~
 *.dbmdl
@@ -245,12 +249,16 @@ Generated_Code/
 # because we have git ;-)
 _UpgradeReport_Files/
 Backup*/
-UpgradeLog*.XML
-UpgradeLog*.htm
-ServiceFabricBackup/
+UpgradeLog*.XMLlocal_deploy
+
+UpgradeLog*.htmlocal_deploy
+
+ServiceFabricBalocal_deploy
+
 *.rptproj.bak
 
-# SQL Server files
+# SQL Server filocal_deploy
+
 *.mdf
 *.ldf
 *.ndf
@@ -345,3 +353,6 @@ MigrationBackup/
 
 # VS Code 
 .vscode/
+
+#local config
+local_deploy
