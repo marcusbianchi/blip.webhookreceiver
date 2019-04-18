@@ -66,7 +66,7 @@ namespace blip.webhookreceiver.core.Services
                     id = blipMmessage.id,
                     from = blipMmessage.from,
                     to = blipMmessage.to,
-                    metadata = blipMmessage.metadata.ToString(),
+                    metadata = blipMmessage.metadata?.ToString(),
                     text = blipMmessage.text,
                     target = blipMmessage.target,
                     previewUri = blipMmessage.previewUri,
@@ -88,7 +88,7 @@ namespace blip.webhookreceiver.core.Services
                     id = cBlipMmessage.id,
                     from = cBlipMmessage.from,
                     to = cBlipMmessage.to,
-                    metadata = cBlipMmessage.metadata.ToString(),
+                    metadata = cBlipMmessage.metadata?.ToString(),
                     content = cBlipMmessage.content,
                     storageDate = DateTime.Now.ToUniversalTime().ToString()
                 };

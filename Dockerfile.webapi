@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS http://*:5000
+EXPOSE 5000
+
+
+#build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS builder
+ARG Configuration=Release
+WORKDIR /src
+COPY ./blip.webhookreceiver.sln ./
+COPY ./blip.webhookreceiver.core/blip.webhookreceiver.core.csproj blip.webhookreceiver.core/
+COPY ./blip.webhookreceiver.pubsub/blip.webhookreceiver.pubsub.csproj blip.webhookreceiver.pubsub/
+COPY ./blip.webhookreceiver.webapi/blip.webhookreceiver.webapi.csproj blip.webhookreceiver.webapi/
+
+COPY . .
+WORKDIR /src/blip.webhookreceiver.webapi
+RUN dotnet restore
+RUN dotnet build -c $Configuration -o /app
+
+FROM builder AS publish
+ARG Configuration=Release
+RUN dotnet publish -c $Configuration -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "blip.webhookreceiver.webapi.dll"]
