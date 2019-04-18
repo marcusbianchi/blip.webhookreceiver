@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  daemon:
+    image: marcusbianchi/blip.webhookreceiver.webapi.gcp.pubsub:1.0
+    environment:
+    - MESSAGE_TOPIC_NAME=webhook-message-hmg
+    - EVENT_TOPIC_NAME=webhook-event-hmg
+    - GOOGLE_APPLICATION_CREDENTIALS=/google.json
+    volumes:
+    - /home/user/google.json:/google.json
+    ports:
+    - "5000:5000"

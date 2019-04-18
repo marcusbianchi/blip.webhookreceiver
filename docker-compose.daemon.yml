@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  daemon:
+    image: marcusbianchi / blip.webhookreceiver.daemon.gcp.pubsub:1.0
+    environment:
+    - MESSAGE_SUBSCRIPTION_NAME=sub-webhook-message-hmg
+    - EVENT_SUBSCRIPTION_NAME=sub-webhook-event-hmg
+    - DATASET_NAME=webhook_hmg
+    - EVENT_TABLE_NAME=event
+    - MESSAGE_TABLE_NAME=message
+    - GOOGLE_APPLICATION_CREDENTIALS=/google.json
+    volumes:
+    - /home/user/google.json:/google.json

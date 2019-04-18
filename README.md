@@ -22,7 +22,7 @@ Sub-project to process the messages using GPC BigQuery
 
 # Missing Features
 - Logging (DONE!)
-- Docker Containers
+- Docker Containers (DONE!)
 - Kubernetes
 - Deploy Prod
 - Unit Testing
