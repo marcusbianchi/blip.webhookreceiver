@@ -25,5 +25,6 @@ Sub-project to process the messages using GPC BigQuery
 - Docker Containers (DONE!)
 - Kubernetes (DONE!)
 - Deploy Prod (DONE!)
+- Contacts Processing
 - Health Monitoring Endpoing
 - Unit Testing
