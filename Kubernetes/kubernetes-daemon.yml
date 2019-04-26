@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webhook-daemon-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: webhook-daemon
+    spec:
+      containers:
+      - name: blip-webhookreceiver-daemon-gcp-pubsub
+        image: marcusbianchi/blip.webhookreceiver.daemon.gcp.pubsub:1.0
+        env:
+        - name: MESSAGE_SUBSCRIPTION_NAME
+          value: sub-webhook-message-hmg
+        - name: EVENT_SUBSCRIPTION_NAME
+          value: sub-webhook-event-hmg
+        - name: DATASET_NAME
+          value: webhook_hmg
+        - name: EVENT_TABLE_NAME
+          value: event
+        - name: MESSAGE_TABLE_NAME
+          value: message
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/gcp/sa_credentials.json
+        volumeMounts:
+        - name: service-account-credentials-volume
+          mountPath: /etc/gcp
+          readOnly: true
+      volumes:
+      - name: service-account-credentials-volume
+        secret:
+          secretName: account-credentials
+          items:
+          - key: sa_json
+            path: sa_credentials.json

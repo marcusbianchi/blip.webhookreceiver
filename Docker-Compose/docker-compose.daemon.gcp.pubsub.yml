@@ -9,6 +9,6 @@ services:
     - DATASET_NAME=webhook_hmg
     - EVENT_TABLE_NAME=event
     - MESSAGE_TABLE_NAME=message
-    - GOOGLE_APPLICATION_CREDENTIALS=/google.json
+    - GOOGLE_APPLICATION_CREDENTIALS=/etc/google.json
     volumes:
     - /home/user/google.json:/google.json

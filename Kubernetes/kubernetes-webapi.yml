@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webhook-webapi-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: webhook-webapi
+    spec:
+      containers:
+      - name: blip-webhookreceiver-webapi-gcp-pubsub
+        image: marcusbianchi/blip.webhookreceiver.webapi.gcp.pubsub:1.0
+        ports:
+        - name: netcore-port
+          containerPort: 5000
+        env:
+        - name: MESSAGE_TOPIC_NAME
+          value: webhook-message-hmg
+        - name: EVENT_TOPIC_NAME
+          value: webhook-event-hmg
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/gcp/sa_credentials.json
+        volumeMounts:
+        - name: service-account-credentials-volume
+          mountPath: /etc/gcp
+          readOnly: true
+      volumes:
+      - name: service-account-credentials-volume
+        secret:
+          secretName: account-credentials
+          items:
+          - key: sa_json
+            path: sa_credentials.json

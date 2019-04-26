@@ -1,4 +1,4 @@
-# blip.webhookreceiver
+# blip.webhookreceiver 
 Project to receive webhook from BLIP messages
 
 ## blip.webhookreceiver.pubsub
@@ -23,6 +23,7 @@ Sub-project to process the messages using GPC BigQuery
 # Missing Features
 - Logging (DONE!)
 - Docker Containers (DONE!)
-- Kubernetes
-- Deploy Prod
+- Kubernetes (DONE!)
+- Deploy Prod (DONE!)
+- Health Monitoring Endpoing
 - Unit Testing
